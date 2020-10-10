@@ -289,7 +289,7 @@ func (s *Service)  ExportToFile(path string) error {
 		log.Print(err)
 		return ErrFileNotFound
 	}
-	return err
+	return nil
 }
 
 
