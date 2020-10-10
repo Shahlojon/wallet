@@ -297,7 +297,6 @@ func (s *Service)  ExportToFile(path string) error {
 
 //ImportFromFile - импортирует все записи из файла
 func (s *Service) ImportFromFile(path string) error {
-	//s.ExportToFile(path)
 	file, err := os.Open(path)
 
 	if err != nil {
