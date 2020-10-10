@@ -266,6 +266,7 @@ func (s *Service)  ExportToFile(path string) error {
 	file, err :=os.Create(path)	
 	if err != nil {
 		log.Print(err)
+		return ErrFileNotFound
 	}
 	
 	defer func () {
