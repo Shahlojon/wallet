@@ -297,112 +297,59 @@ func (s *Service)  ExportToFile(path string) error {
 
 //ImportFromFile - импортирует все записи из файла
 func (s *Service) ImportFromFile(path string) error {
-	// s.ExportToFile(path)
-	// file, err := os.Open(path)
-
-	// if err != nil {
-	// 	log.Print(err)
-	// 	return ErrFileNotFound
-	// }
-	// //defer closeFile(file)
-	// defer func(){
-	// 	if cerr := file.Close(); cerr != nil {
-	// 		log.Print(cerr)
-	// 	}
-	// }()
-	// //log.Printf("%#v", file)
-	
-	// content :=make([]byte, 0)
-	// buf := make([]byte, 4)
-	// for {
-	// 	read, err := file.Read(buf)
-	// 	if err == io.EOF {
-	// 		break
-	// 	}
-
-	// 	if err!=nil {
-	// 		log.Print(err)
-	// 		return ErrFileNotFound
-	// 	}
-	// 	content = append(content, buf[:read]...)
-	// }
-
-	// data:=string(content)
-	
-	// accounts :=strings.Split(string(data), "|")
-	// //accounts = accounts[:len(accounts)-1]
-	// for _, account := range accounts {
-	// 	value := strings.Split(account, ";")
-	// 	id,err := strconv.Atoi(value[0])
-	// 	if err!=nil {
-	// 		return err
-	// 	}
-	// 	phone :=types.Phone(value[1])
-	// 	balance, err := strconv.Atoi(value[2])
-	// 	if err!=nil {
-	// 		return err
-	// 	}
-	// 	editAccount := &types.Account {
-	// 		ID: int64(id),
-	// 		Phone: phone,
-	// 		Balance: types.Money(balance),
-	// 	}
-
-	// 	s.accounts = append(s.accounts, editAccount)
-	// }
-	// return nil
-
-	s.ExportToFile(path) 
+	s.ExportToFile(path)
 	file, err := os.Open(path)
+
 	if err != nil {
 		log.Print(err)
 		return ErrFileNotFound
 	}
-	defer func() {
+	//defer closeFile(file)
+	defer func(){
 		if cerr := file.Close(); cerr != nil {
 			log.Print(cerr)
 		}
 	}()
-
-	content := make([]byte, 0)
+	//log.Printf("%#v", file)
+	
+	content :=make([]byte, 0)
 	buf := make([]byte, 4)
 	for {
 		read, err := file.Read(buf)
 		if err == io.EOF {
 			break
 		}
-		if err != nil {
+
+		if err!=nil {
 			log.Print(err)
 			return ErrFileNotFound
 		}
 		content = append(content, buf[:read]...)
 	}
-	data := string(content)
 
-	accounts := strings.Split(string(data), "|")
-	accounts = accounts[:len(accounts)-1] 
+	data:=string(content)
+	
+	accounts :=strings.Split(data, "|")
+	accounts = accounts[:len(accounts)-1]
 	for _, account := range accounts {
 		value := strings.Split(account, ";")
-
-		ID, err := strconv.Atoi(value[0])
-		if err != nil {
+		id,err := strconv.Atoi(value[0])
+		if err!=nil {
 			return err
 		}
-
+		phone :=types.Phone(value[1])
 		balance, err := strconv.Atoi(value[2])
-		if err != nil {
+		if err!=nil {
 			return err
 		}
-
-		newAccount := &types.Account{
-			ID:      int64(ID),
-			Phone:   types.Phone(value[1]),
+		editAccount := &types.Account {
+			ID: int64(id),
+			Phone: phone,
 			Balance: types.Money(balance),
 		}
 
-		s.accounts = append(s.accounts, newAccount)
+		s.accounts = append(s.accounts, editAccount)
 	}
-
 	return nil
 }
 
