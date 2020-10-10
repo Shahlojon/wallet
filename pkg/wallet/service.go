@@ -297,7 +297,7 @@ func (s *Service)  ExportToFile(path string) error {
 
 //ImportFromFile - импортирует все записи из файла
 func (s *Service) ImportFromFile(path string) error {
-	s.ExportToFile(path)
+	//s.ExportToFile(path)
 	file, err := os.Open(path)
 
 	if err != nil {
@@ -331,10 +331,11 @@ func (s *Service) ImportFromFile(path string) error {
 	
 	accounts :=strings.Split(data, "|")
 	accounts = accounts[:len(accounts)-1]
-	if accounts == nil {
-		return ErrAccountNotFound
-	}
+	// if accounts == nil {
+	// 	return ErrAccountNotFound
+	// }
 	for _, account := range accounts {
+		
 		value := strings.Split(account, ";")
 		id,err := strconv.Atoi(value[0])
 		if err!=nil {
@@ -352,6 +353,7 @@ func (s *Service) ImportFromFile(path string) error {
 		}
 
 		s.accounts = append(s.accounts, editAccount)
+		log.Print(account)
 	}
 	return nil
 }

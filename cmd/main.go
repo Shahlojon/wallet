@@ -8,11 +8,11 @@ import (
 func main() {
 	//fmt.Println("hello")
 	svc :=&wallet.Service{}
-	svc.RegisterAccount("+992000000001")
+	//svc.RegisterAccount("+992000000001")
 	//svc.Deposit(1, 10)
-	svc.RegisterAccount("+992000000002")
-	svc.ExportToFile("data/export.txt")
-	svc.ExportToFile("data/import.txt")
+	//svc.RegisterAccount("+992000000002")
+	//svc.ExportToFile("data/export.txt")
+	svc.ImportFromFile("data/export.txt")
 	// account, err :=svc.RegisterAccount("+992000000001")
 	// if err !=nil {
 	// 	fmt.Println(account, err)
