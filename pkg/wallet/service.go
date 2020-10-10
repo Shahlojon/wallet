@@ -331,6 +331,9 @@ func (s *Service) ImportFromFile(path string) error {
 	
 	accounts :=strings.Split(data, "|")
 	accounts = accounts[:len(accounts)-1]
+	if accounts == nil {
+		return ErrAccountNotFound
+	}
 	for _, account := range accounts {
 		value := strings.Split(account, ";")
 		id,err := strconv.Atoi(value[0])

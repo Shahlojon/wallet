@@ -9,7 +9,7 @@ func main() {
 	//fmt.Println("hello")
 	svc :=&wallet.Service{}
 	svc.RegisterAccount("+992000000001")
-	svc.Deposit(1, 10)
+	//svc.Deposit(1, 10)
 	svc.RegisterAccount("+992000000002")
 	svc.ExportToFile("data/export.txt")
 	svc.ExportToFile("data/import.txt")
