@@ -12,6 +12,7 @@ func main() {
 	svc.Deposit(1, 10)
 	svc.RegisterAccount("+992000000002")
 	svc.ExportToFile("data/export.txt")
+	svc.ExportToFile("data/import.txt")
 	// account, err :=svc.RegisterAccount("+992000000001")
 	// if err !=nil {
 	// 	fmt.Println(account, err)
