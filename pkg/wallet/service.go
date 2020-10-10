@@ -306,9 +306,8 @@ func (s *Service) ImportFromFile(path string) error {
 	}
 	//defer closeFile(file)
 	defer func(){
-		err :=file.Close()
-		if err!=nil{
-			log.Print(err)
+		if cerr := file.Close(); cerr != nil {
+			log.Print(cerr)
 		}
 	}()
 	//log.Printf("%#v", file)
