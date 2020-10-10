@@ -329,7 +329,7 @@ func (s *Service) ImportFromFile(path string) error {
 
 	data:=string(content)
 	
-	accounts :=strings.Split(data, "|")
+	accounts :=strings.Split(string(data), "|")
 	accounts = accounts[:len(accounts)-1]
 	for _, account := range accounts {
 		value := strings.Split(account, ";")
