@@ -1,6 +1,9 @@
 package wallet
 
 import (
+	"strconv"
+	"os"
+	"log"
 	"errors"
 	"fmt"
 
@@ -14,6 +17,7 @@ var ErrAmountMustBePositive = errors.New("amount must be greater than 0")
 var ErrAccountNotFound = errors.New("account not found")
 var ErrNotEnoughBalance = errors.New("balance is null")
 var ErrPaymentNotFound = errors.New("payment not found")
+var ErrFileNotFound = errors.New("file not found")
 
 type Service struct {
 	nextAccountID int64 //Для генерации уникального номера аккаунта
@@ -255,6 +259,37 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 	}
 
 	return pay, nil
+}
+
+//ExportToFile - экспортирует все аккаунты
+func (s *Service)  ExportToFile(path string) error {
+	file, err :=os.Create(path)	
+	if err != nil {
+		log.Print(err)
+	}
+	
+	defer func () {
+		if cerr := file.Close(); cerr!=nil{
+			log.Print(cerr)
+		}
+	}()
+    data := ""
+	for _, account := range s.accounts {
+		id := strconv.Itoa(int(account.ID))+";"
+		balance := strconv.Itoa(int(account.Balance))+";"
+		phone:=string(account.Phone)
+
+		data +=id
+		data +=balance
+		data += phone + "|"
+	}
+
+	_, err = file.Write([]byte(data))
+	if err!=nil {
+		log.Print(err)
+		return ErrFileNotFound
+	}
+	return err
 }
 
 
