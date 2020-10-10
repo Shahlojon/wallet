@@ -311,7 +311,7 @@ func (s *Service) ImportFromFile(path string) error {
 			log.Print(err)
 		}
 	}()
-	log.Printf("%#v", file)
+	//log.Printf("%#v", file)
 	
 	content :=make([]byte, 0)
 	buf := make([]byte, 4)
@@ -331,7 +331,7 @@ func (s *Service) ImportFromFile(path string) error {
 	data:=string(content)
 	
 	accounts :=strings.Split(data, "|")
-	
+	accounts = accounts[:len(accounts)-1]
 	for _, account := range accounts {
 		value := strings.Split(account, ";")
 		id,err := strconv.Atoi(value[0])
