@@ -548,7 +548,7 @@ func (s *Service) Import(dir string) error {
 		}()
 		
 		contentPayment :=make([]byte, 0)
-		buf = make([]byte, 4)
+		buf := make([]byte, 4)
 		for {
 			readPayment, err := filePayment.Read(buf)
 			if err == io.EOF {
@@ -562,7 +562,7 @@ func (s *Service) Import(dir string) error {
 			contentPayment = append(contentPayment, buf[:readPayment]...)
 		}
 
-		data = string(contentPayment)
+		data := string(contentPayment)
 		
 		payments :=strings.Split(data, "|")
 		payments = payments[:len(payments)-1]
@@ -614,7 +614,7 @@ func (s *Service) Import(dir string) error {
 		}()
 		
 		contentFavorite :=make([]byte, 0)
-		buf = make([]byte, 4)
+		buf := make([]byte, 4)
 		for {
 			readFavorite, err := fileFavorite.Read(buf)
 			if err == io.EOF {
@@ -628,7 +628,7 @@ func (s *Service) Import(dir string) error {
 			contentFavorite = append(contentFavorite, buf[:readFavorite]...)
 		}
 
-		data = string(contentFavorite)
+		data := string(contentFavorite)
 		//log.Print(dirfavorite, " fav ", data)
 		favorites :=strings.Split(data, "|")
 		favorites = favorites[:len(favorites)-1]

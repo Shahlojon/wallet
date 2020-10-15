@@ -87,7 +87,7 @@ func main() {
 		return
 	}
 
-	err = svc.Export(wd)
+	err = svc.Import(wd)
 	if err != nil {
 	 	log.Print(err)
 	 	return
