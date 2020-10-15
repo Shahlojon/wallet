@@ -594,7 +594,7 @@ func (s *Service) Import(dir string) error {
 
 	dirfavorite := dir + "/favorites.dump"
 	fileFavorite, err := os.Open(dirfavorite)
-
+	
 	if err != nil {
 		log.Print(err)
 		return ErrFileNotFound
@@ -617,11 +617,11 @@ func (s *Service) Import(dir string) error {
 			log.Print(err)
 			return ErrFileNotFound
 		}
-		contentPayment = append(contentFavorite, buf[:readFavorite]...)
+		contentFavorite = append(contentFavorite, buf[:readFavorite]...)
 	}
 
 	data = string(contentFavorite)
-	
+	log.Print(dirfavorite, " fav ", data)
 	favorites :=strings.Split(data, "|")
 	favorites = favorites[:len(favorites)-1]
 
