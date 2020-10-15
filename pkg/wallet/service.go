@@ -364,7 +364,7 @@ func (s *Service) Export(dir string) error {
 		file, err :=os.Create(fileDir)	
 		if err != nil {
 			log.Print(err)
-			//return ErrFileNotFound
+			return ErrFileNotFound
 		}
 		
 		defer func () {
@@ -386,7 +386,7 @@ func (s *Service) Export(dir string) error {
 		_, err = file.Write([]byte(data))
 		if err!=nil {
 			log.Print(err)
-			//return ErrFileNotFound
+			return ErrFileNotFound
 		}
 	}
 
@@ -397,7 +397,7 @@ func (s *Service) Export(dir string) error {
 		file, err :=os.Create(fileDir)	
 		if err != nil {
 			log.Print(err)
-			//return ErrFileNotFound
+			return ErrFileNotFound
 		}
 		
 		defer func () {
@@ -434,7 +434,7 @@ func (s *Service) Export(dir string) error {
 		file, err :=os.Create(fileDir)	
 		if err != nil {
 			log.Print(err)
-			//return ErrFileNotFound
+			return ErrFileNotFound
 		}
 		
 		defer func () {
@@ -460,7 +460,7 @@ func (s *Service) Export(dir string) error {
 		_, err = file.Write([]byte(data))
 		if err!=nil {
 			log.Print(err)
-			//return ErrFileNotFound
+			return ErrFileNotFound
 		}
 	}
 	return nil
@@ -474,7 +474,7 @@ func (s *Service) Import(dir string) error {
 
 	if err != nil {
 		log.Print(err)
-		//return ErrFileNotFound
+		return ErrFileNotFound
 	}
 	defer func(){
 		if cerr := file.Close(); cerr != nil {
@@ -493,21 +493,23 @@ func (s *Service) Import(dir string) error {
 		if err!=nil {
 			log.Print(err)
 			//log.Print(dirAccount, " 3333")
-			//return ErrFileNotFound
+			return ErrFileNotFound
 		}
 		content = append(content, buf[:read]...)
 	}
 
 	data:=string(content)
-	
+
 	accounts :=strings.Split(data, "|")
 	accounts = accounts[:len(accounts)-1]
 	// if accounts == nil {
 	// 	return ErrAccountNotFound
 	// }
+
 	for _, account := range accounts {
-		
+
 		value := strings.Split(account, ";")
+
 		id,err := strconv.Atoi(value[0])
 		if err!=nil {
 			return err
@@ -522,9 +524,9 @@ func (s *Service) Import(dir string) error {
 			Phone: phone,
 			Balance: types.Money(balance),
 		}
+		//log.Print(editAccount, " read")
 
 		s.accounts = append(s.accounts, editAccount)
-		//log.Print(account)
 	}
 
 	dirPaymnet := dir + "/payments.dump"
@@ -532,7 +534,7 @@ func (s *Service) Import(dir string) error {
 
 	if err != nil {
 		log.Print(err)
-		//return ErrFileNotFound
+		return ErrFileNotFound
 	}
 	defer func(){
 		if cerr := filePayment.Close(); cerr != nil {
@@ -550,7 +552,7 @@ func (s *Service) Import(dir string) error {
 
 		if err!=nil {
 			log.Print(err)
-			//return ErrFileNotFound
+			return ErrFileNotFound
 		}
 		contentPayment = append(contentPayment, buf[:readPayment]...)
 	}
@@ -586,7 +588,7 @@ func (s *Service) Import(dir string) error {
 		}
 
 		s.payments = append(s.payments, newPayment)
-		log.Print(payment)
+		//log.Print(payment)
 		
 	}
 
@@ -595,7 +597,7 @@ func (s *Service) Import(dir string) error {
 	
 	if err != nil {
 		log.Print(err)
-		//return ErrFileNotFound
+		return ErrFileNotFound
 	}
 	defer func(){
 		if cerr := fileFavorite.Close(); cerr != nil {
@@ -648,6 +650,7 @@ func (s *Service) Import(dir string) error {
 		}
 
 		s.favorites = append(s.favorites, newFavorite)
+		//log.Print(favorite)
 	}
 
 	return nil
