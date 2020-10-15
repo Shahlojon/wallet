@@ -390,42 +390,6 @@ func (s *Service) Export(dir string) error {
 		}
 	}
 
-	lenFavorites := len(s.favorites)
-
-	if lenFavorites!=0 {
-		fileDir := dir+"/favorites.dump"
-		file, err :=os.Create(fileDir)	
-		if err != nil {
-			log.Print(err)
-			return ErrFileNotFound
-		}
-		
-		defer func () {
-			if cerr := file.Close(); cerr!=nil{
-				log.Print(cerr)
-			}
-		}()
-		data := ""
-		for _, favorite := range s.favorites {
-			idFavorite := string(favorite.ID)+";"
-			idFavoriteAccountId := strconv.Itoa(int(favorite.AccountID))+";"
-			nameFavorite := string(favorite.Name)+";"
-			amountFavorite :=strconv.Itoa(int(favorite.Amount))+";"
-			categoryFavorite :=string(favorite.Category)
-
-			data +=idFavorite
-			data+=idFavoriteAccountId
-			data += nameFavorite 
-			data+=amountFavorite
-			data +=categoryFavorite+"|"
-		}
-		_, err = file.Write([]byte(data))
-		if err!=nil {
-			log.Print(err)
-			return ErrFileNotFound
-		}
-	}
-
 	lenPayments := len(s.payments)
 
 	if lenPayments!=0 {
@@ -457,6 +421,42 @@ func (s *Service) Export(dir string) error {
 			data +=statusPayment+"|"
 		}
 
+		_, err = file.Write([]byte(data))
+		if err!=nil {
+			log.Print(err)
+			return ErrFileNotFound
+		}
+	}
+
+	lenFavorites := len(s.favorites)
+
+	if lenFavorites!=0 {
+		fileDir := dir+"/favorites.dump"
+		file, err :=os.Create(fileDir)	
+		if err != nil {
+			log.Print(err)
+			return ErrFileNotFound
+		}
+		
+		defer func () {
+			if cerr := file.Close(); cerr!=nil{
+				log.Print(cerr)
+			}
+		}()
+		data := ""
+		for _, favorite := range s.favorites {
+			idFavorite := string(favorite.ID)+";"
+			idFavoriteAccountId := strconv.Itoa(int(favorite.AccountID))+";"
+			nameFavorite := string(favorite.Name)+";"
+			amountFavorite :=strconv.Itoa(int(favorite.Amount))+";"
+			categoryFavorite :=string(favorite.Category)
+
+			data +=idFavorite
+			data+=idFavoriteAccountId
+			data += nameFavorite 
+			data+=amountFavorite
+			data +=categoryFavorite+"|"
+		}
 		_, err = file.Write([]byte(data))
 		if err!=nil {
 			log.Print(err)
