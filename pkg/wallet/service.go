@@ -433,7 +433,6 @@ func (s *Service) Export(dir string) error {
 
 	if lenPayments!=0 {
 		fileDir := dir+"/payments.dump"
-
 		file, err :=os.Create(fileDir)	
 		if err != nil {
 			log.Print(err)
@@ -495,6 +494,7 @@ func (s *Service) Import(dir string) error {
 
 		if err!=nil {
 			log.Print(err)
+			log.Print(dirAccount, " 3333")
 			return ErrFileNotFound
 		}
 		content = append(content, buf[:read]...)
@@ -526,10 +526,10 @@ func (s *Service) Import(dir string) error {
 		}
 
 		s.accounts = append(s.accounts, editAccount)
-		log.Print(account)
+		//log.Print(account)
 	}
 
-	dirPaymnet := dir + "/paymnets.dump"
+	dirPaymnet := dir + "/payments.dump"
 	filePayment, err := os.Open(dirPaymnet)
 
 	if err != nil {
@@ -560,8 +560,8 @@ func (s *Service) Import(dir string) error {
 	data = string(contentPayment)
 	
 	payments :=strings.Split(data, "|")
-	payments = accounts[:len(payments)-1]
-	
+	payments = payments[:len(payments)-1]
+	//log.Print(favorites, " fav")
 	for _, payment := range payments {
 		
 		value := strings.Split(payment, ";")
@@ -589,6 +589,7 @@ func (s *Service) Import(dir string) error {
 
 		s.payments = append(s.payments, newPayment)
 		log.Print(payment)
+		
 	}
 
 	dirfavorite := dir + "/favorites.dump"
@@ -622,14 +623,10 @@ func (s *Service) Import(dir string) error {
 	data = string(contentFavorite)
 	
 	favorites :=strings.Split(data, "|")
-	favorites = accounts[:len(favorites)-1]
-	
+	favorites = favorites[:len(favorites)-1]
+
 	for _, favorite := range favorites {
-		// idFavorite := string(favorite.ID)+";"
-		// 	nameFavorite := string(favorite.Name)+";"
-		// 	idFavoriteAccountId := strconv.Itoa(int(favorite.AccountID))+";"
-		// 	amountFavorite :=strconv.Itoa(int(favorite.Amount))+";"
-		// 	categoryFavorite :=string(favorite.Category)+";"
+		
 		valueFavorite := strings.Split(favorite, ";")
 		idFavorite := string(valueFavorite[0])
 		accountIdFavorite, err :=strconv.Atoi(valueFavorite[1])
