@@ -73,13 +73,17 @@ func main() {
 
 
 	newPay, err := svc.Pay(accountTest.ID,10_000_00,"auto")
-	fmt.Println(accountTest.Balance)
-	fmt.Println(newPay)
+	newPay, err = svc.Pay(accountTest.ID,10_000_00,"food")
+	newPay, err = svc.Pay(accountTest.ID,10_000_00,"animal")
+	newPay, err = svc.Pay(accountTest.ID,10_000_00,"car")
+	newPay, err = svc.Pay(accountTest.ID,10_000_00,"restaurent")
+	// fmt.Println(accountTest.Balance)
+	// fmt.Println(newPay)
 	fmt.Println(err)
 
-	fav, errFav := svc.FavoritePayment(newPay.ID, "Babilon")
-	fmt.Println(errFav)
-	fmt.Println(fav)
+	// fav, errFav := svc.FavoritePayment(newPay.ID, "Babilon")
+	// fmt.Println(errFav)
+	// fmt.Println(fav)
    
 	wd, err := os.Getwd()
 	if err != nil {
@@ -87,9 +91,23 @@ func main() {
 		return
 	}
 
-	err = svc.Import(wd)
+	// err = svc.Import(wd)
+	// if err != nil {
+	//  	log.Print(err)
+	//  	return
+	// }
+
+	
+	paymentsExportHistory, err := svc.ExportAccountHistory(newPay.AccountID)
 	if err != nil {
-	 	log.Print(err)
-	 	return
+		log.Print(err)
+		return
+	}
+
+	err = svc.HistoryToFiles(paymentsExportHistory,wd,2)
+	if err != nil {
+		log.Print(err)
+		return
 	}
 }
+
