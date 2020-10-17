@@ -839,11 +839,9 @@ func (s *Service) SumPayments(goroutines int) types.Money {
 			payments := s.payments[index*kol : (index+1)*kol]
 			for _, payment := range payments {
 				val += int64(payment.Amount)
-				log.Print(payment, " val= ", val)
 			}
 			mu.Lock()
 			sum += val
-			log.Print(sum)
 			mu.Unlock()
 
 		}(i)
