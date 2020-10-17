@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"sync"
 	"strings"
 	"io"
 	"strconv"
@@ -736,4 +737,130 @@ func (s *Service) HistoryToFiles(payments []types.Payment, dir string, records i
 		}
 	}
 	return nil
+}
+
+// func (s *Service) ExportAccountHistory(accountID int64) ([]types.Payment, error) {
+// 	var paymentFound []types.Payment
+
+// 	for _, payment := range s.payments {
+// 		if payment.AccountID == accountID {
+// 			paymentFound = append(paymentFound, *payment)
+// 		}
+// 	}
+// 	if paymentFound == nil {
+// 		return nil, ErrAccountNotFound
+// 	}
+// 	return paymentFound, nil
+// }
+
+// func (s *Service) HistoryToFiles(payments []types.Payment, dir string, records int) error {
+// 	// if payments == nil {
+// 	// 	log.Print(ErrPaymentNotFound)
+// 	// 	return nil
+// 	// }
+// 	if len(payments)>0 {
+// 		if len(payments) <= records {
+// 			filePayments := dir + "/payments.dump"
+// 				file, err := os.Create(filePayments)
+// 				if err != nil {
+// 					log.Print(err)
+// 					// return ErrFileNotFound
+// 				}
+// 				defer func () {
+// 					if cerr := file.Close(); cerr != nil {
+// 						log.Print(cerr)
+// 					}
+// 				}()
+// 				data_payment := ""
+// 				for _, payment := range payments {
+// 					id := payment.ID + ";"
+// 					accountID := strconv.Itoa(int(payment.AccountID)) + ";"
+// 					amount := strconv.Itoa(int(payment.Amount)) + ";"
+// 					category := string(payment.Category) + ";"
+// 					status := string(payment.Status)
+
+// 					data_payment += id
+// 					data_payment += accountID
+// 					data_payment += amount
+// 					data_payment += category
+// 					data_payment += status + "\n"
+// 				}
+// 				_, pay_err := file.Write([]byte(data_payment))
+// 				if pay_err != nil {
+// 					log.Print(pay_err)
+// 					// return ErrFileNotFound
+// 				}
+// 		} else {
+			
+// 			var str string
+// 			k:=0
+// 			t:=1
+// 			var file *os.File
+// 			for _, payment := range payments {
+// 				if k==0{
+// 					file, _ = os.OpenFile(dir+"/payments"+fmt.Sprint(t)+".dump", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
+// 				}
+// 				k++
+// 				str = string(payment.ID)+";" + strconv.Itoa(int(payment.AccountID))+";" + strconv.Itoa(int(payment.Amount))+";" + string(payment.Category)+";" + string(payment.Status) + "\n"
+// 				_, err := file.WriteString(str)
+// 				if err!=nil {
+// 					log.Print(err)
+// 				}
+// 			    if k == records{
+// 					str=""
+// 					t++
+// 					k=0;
+// 				    fmt.Println(t, " = t")
+// 					file.Close()
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return nil
+// }
+
+//SumPayments ...
+func (s *Service) SumPayments(goroutines int) types.Money {
+	wg := sync.WaitGroup{}
+	mu := sync.Mutex{}
+	sum := int64(0)
+	kol := 0
+	i := 0
+	if goroutines == 0 {
+		kol = len(s.payments)
+	} else {
+		kol = int(len(s.payments) / goroutines)
+	}
+	for i = 0; i < goroutines-1; i++ {
+		wg.Add(1)
+		go func(index int) {
+			defer wg.Done()
+			val := int64(0)
+			payments := s.payments[index*kol : (index+1)*kol]
+			for _, payment := range payments {
+				val += int64(payment.Amount)
+				log.Print(payment, " val= ", val)
+			}
+			mu.Lock()
+			sum += val
+			log.Print(sum)
+			mu.Unlock()
+
+		}(i)
+	}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		val := int64(0)
+		payments := s.payments[i*kol:]
+		for _, payment := range payments {
+			val += int64(payment.Amount)
+		}
+		mu.Lock()
+		sum += val
+		mu.Unlock()
+
+	}()
+	wg.Wait()
+	return types.Money(sum)
 }
