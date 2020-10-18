@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"os"
 	"reflect"
 	"testing"
 
@@ -177,54 +178,52 @@ func TestService_Repeat_success_user(t *testing.T) {
 	}
 }
 
-// func TestService_Export_success_user(t *testing.T) {
-// 	var svc Service
+func TestService_Export_success_user(t *testing.T) {
+	var svc Service
 
-// 	svc.RegisterAccount("+992000000001")
-// 	svc.RegisterAccount("+992000000002")
-// 	svc.RegisterAccount("+992000000003")
+	svc.RegisterAccount("+992000000001")
+	svc.RegisterAccount("+992000000002")
+	svc.RegisterAccount("+992000000003")
 
-// 	err := svc.ExportToFile("export.txt")
-// 	if err != nil {
-// 		t.Errorf("method ExportToFile returned not nil error, err => %v", err)
-// 	}
+	err := svc.ExportToFile("export.txt")
+	if err != nil {
+		t.Errorf("method ExportToFile returned not nil error, err => %v", err)
+	}
 
-// }
+}
 
-// func TestService_Import_success_user(t *testing.T) {
-// 	var svc Service
+func TestService_Import_success_user(t *testing.T) {
+	var svc Service
 
 
-// 	err := svc.ImportFromFile("export.txt")
+	err := svc.ImportFromFile("export.txt")
 	
-// 	if err != nil {
-// 		t.Errorf("method ExportToFile returned not nil error, err => %v", err)
-// 	}
+	if err != nil {
+		t.Errorf("method ExportToFile returned not nil error, err => %v", err)
+	}
 
-// }
+}
 
 
 
-// func TestService_ExportImport_success_user(t *testing.T) {
-// 	var svc Service
+func TestService_ExportImport_success_user(t *testing.T) {
+	var svc Service
 
-// 	svc.RegisterAccount("+992000000001")
-// 	svc.RegisterAccount("+992000000002")
-// 	svc.RegisterAccount("+992000000003")
-// 	svc.RegisterAccount("+992000000004")
-	
-// 	err := svc.Export("data")
-// 	if err != nil {
-// 		t.Errorf("method ExportToFile returned not nil error, err => %v", err)
-// 	}
+	svc.RegisterAccount("+992000000001")
+	svc.RegisterAccount("+992000000002")
+	svc.RegisterAccount("+992000000003")
+	svc.RegisterAccount("+992000000004")
 
-// 	err = svc.Import("data")
-	
-// 	if err != nil {
-// 		t.Errorf("method ExportToFile returned not nil error, err => %v", err)
-// 	}
-
-// }
+	wd,_:= os.Getwd()
+	err := svc.Export(wd)
+	if err != nil {
+		t.Errorf("method Export returned not nil error, err => %v", err)
+	}
+	err = svc.Import(wd)
+	if err != nil {
+		t.Errorf("method Import returned not nil error, err => %v", err)
+	}
+}
 
 
 func TestService_ExportHistory_success_user(t *testing.T) {
