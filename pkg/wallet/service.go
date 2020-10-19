@@ -863,3 +863,56 @@ func (s *Service) SumPayments(goroutines int) types.Money {
 	wg.Wait()
 	return types.Money(sum)
 }
+
+//FilterPayments
+func (s Service) FilterPayments(accountID int64, goroutines int) (newPayment []types.Payment, err error) {
+	if goroutines < 2 {
+		for _, value := range s.payments {
+			if value.AccountID == accountID {
+				newPayment = append(newPayment, *value)
+			}
+		}
+		if newPayment == nil {
+			return nil, ErrAccountNotFound
+		}
+		return
+	}
+	wg := sync.WaitGroup{}
+	mutex := sync.Mutex{}
+	max := 0
+	count := len(s.payments) / goroutines
+	for i := 1; i < goroutines; i++ {
+		max += count
+		wg.Add(1)
+		go func(val int) {
+			defer wg.Done()
+			sum := []types.Payment{}
+			for _, value := range s.payments[val-count : val] {
+				if value.AccountID == accountID {
+					sum = append(sum, *value)
+				}
+			}
+			mutex.Lock()
+			newPayment = append(newPayment, sum...)
+			mutex.Unlock()
+		}(max)
+	}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		sum := []types.Payment{}
+		for _, value := range s.payments[max:] {
+			if value.AccountID == accountID {
+				sum = append(sum, *value)
+			}
+		}
+		mutex.Lock()
+		newPayment = append(newPayment, sum...)
+		mutex.Unlock()
+	}()
+	wg.Wait()
+	if newPayment == nil {
+		return nil, ErrAccountNotFound
+	}
+	return
+}

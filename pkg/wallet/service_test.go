@@ -4,7 +4,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
-
+	"log"
 	"github.com/Shahlojon/wallet/pkg/types"
 	"github.com/google/uuid"
 )
@@ -268,7 +268,28 @@ func TestService_ExportHistory_success_user(t *testing.T) {
 
 }
 
+func TestService_ExportHistory(t *testing.T) {
+	svc := &Service{}
 
+	account, err := svc.RegisterAccount("+992000000001")
+	if err != nil {
+	}
+
+	err = svc.Deposit(account.ID, 100_00)
+	if err != nil {
+	}
+
+	svc.Pay(account.ID, 10_00, "auto")
+
+	payment, err := svc.ExportAccountHistory(1)
+	if err != nil {
+		t.Error(err)
+	}
+	err = svc.HistoryToFiles(payment, "data", 2)
+	if err != nil {
+		t.Error(err)
+	}
+}
 func TestService_FavoritePayment_success_user(t *testing.T) {
 	//создаем сервис
 	var s Service
@@ -300,7 +321,7 @@ func TestService_FavoritePayment_success_user(t *testing.T) {
 	}
 }
 
-func BenchmarkSumPayment_user(b *testing.B){
+func BenchmarkSumPayment(b *testing.B){
 	var svc Service
 
 	account, err := svc.RegisterAccount("+992000000001")
@@ -335,5 +356,43 @@ func BenchmarkSumPayment_user(b *testing.B){
 	if want != got{
 		b.Errorf(" error, want => %v got => %v", want, got)
 	}
-
 }
+
+func BenchmarkFilterPayments(b *testing.B) {
+	svc := &Service{}
+
+	account, err := svc.RegisterAccount("+992000000000")
+	account1, err := svc.RegisterAccount("+992000000001")
+	account2, err := svc.RegisterAccount("+992000000002")
+	account3, err := svc.RegisterAccount("+992000000003")
+	account4, err := svc.RegisterAccount("+992000000004")
+	acc, err := svc.RegisterAccount("+992000000005")
+	if err != nil {
+	}
+	svc.Deposit(acc.ID, 100)
+	err = svc.Deposit(account.ID, 100_00)
+	if err != nil {
+	}
+
+	svc.Pay(account.ID, 10_00, "auto")
+	svc.Pay(account.ID, 10_00, "auto")
+	svc.Pay(account1.ID, 10_00, "auto")
+	svc.Pay(account2.ID, 10_00, "auto")
+	svc.Pay(account1.ID, 10_00, "auto")
+	svc.Pay(account1.ID, 10_00, "auto")
+	svc.Pay(account3.ID, 10_00, "auto")
+	svc.Pay(account4.ID, 10_00, "auto")
+	svc.Pay(account1.ID, 10_00, "auto")
+	svc.Pay(account3.ID, 10_00, "auto")
+	svc.Pay(account2.ID, 10_00, "auto")
+	svc.Pay(account4.ID, 10_00, "auto")
+	svc.Pay(account4.ID, 10_00, "auto")
+	svc.Pay(account4.ID, 10_00, "auto")
+
+	a, err := svc.FilterPayments(account.ID, 5)
+	if err != nil {
+		b.Error(err)
+	}
+	log.Println(len(a))
+}
+
