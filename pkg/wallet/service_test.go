@@ -440,6 +440,42 @@ func BenchmarkService_FilterPaymentsByFn(b *testing.B) {
 	log.Println(a)
 }
 
+func BenchmarkSumPaymentsWithProgress(b *testing.B) {
+	svc := &Service{}
+
+	account, err := svc.RegisterAccount("+992000000000")
+	account1, err := svc.RegisterAccount("+992000000001")
+	account2, err := svc.RegisterAccount("+992000000002")
+	account3, err := svc.RegisterAccount("+992000000003")
+	account4, err := svc.RegisterAccount("+992000000004")
+	acc, err := svc.RegisterAccount("+992000000005")
+	if err != nil {
+	}
+	svc.Deposit(acc.ID, 100)
+	err = svc.Deposit(account.ID, 100_00)
+	if err != nil {
+	}
+
+	svc.Pay(account.ID, 10_0000, "auto")
+	svc.Pay(account.ID, 10_0000, "auto")
+	svc.Pay(account1.ID, 10_0000, "auto")
+	svc.Pay(account2.ID, 10_0000, "auto")
+	svc.Pay(account1.ID, 10_0000, "auto")
+	svc.Pay(account1.ID, 10_00, "auto")
+	svc.Pay(account3.ID, 10_00, "auto")
+	svc.Pay(account4.ID, 10_00, "auto")
+	svc.Pay(account1.ID, 10_00, "auto")
+	svc.Pay(account3.ID, 10_00, "auto")
+	svc.Pay(account2.ID, 10_00, "auto")
+	svc.Pay(account4.ID, 10_00, "auto")
+	svc.Pay(account4.ID, 10_00, "auto")
+	svc.Pay(account4.ID, 10_00, "auto")
+
+	sumPay := svc.SumPaymentsWithProgress()
+	
+	log.Println(len(sumPay))
+}
+
 func TestService_SumPayments(b *testing.T) {
 	svc := &Service{}
 
@@ -464,6 +500,5 @@ func TestService_SumPayments(b *testing.T) {
 	if want != got {
 		b.Errorf(" error, want => %v got => %v", want, got)
 	}
-
 }
 

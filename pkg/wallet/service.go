@@ -31,6 +31,11 @@ type Service struct {
 
 type Error string
 
+type Progress struct{
+	Part int
+	Result types.Money
+}
+
 func (e Error) Error() string {
 	return string(e)
 }
@@ -969,3 +974,49 @@ func (s Service) FilterPaymentsByFn(filter func(payment types.Payment) bool, gor
 	}
 	return
 }
+//SumPaymentsWithProgress
+func (s *Service) SumPaymentsWithProgress() <-chan Progress { 
+	var payment []types.Payment
+
+	ch := make(chan Progress,1)
+
+	prog :=Progress{}
+	
+	lenPayment := len(payment)
+	
+	parts:=100_000
+	if lenPayment == parts {
+		sum := Progress{} 			
+		ch<- sum
+		<- ch
+		close(ch)
+		return ch
+	}
+	size:=lenPayment/parts
+	// channel:=make([]<-chan int, parts)
+	goroutines:=1
+	wg := sync.WaitGroup{}
+
+	wg.Add(goroutines)
+	// mu := sync.Mutex{}
+	i:=0
+	go func(payment []types.Payment){
+		for i := 0; i < goroutines; i++ {	
+			defer wg.Done()
+			sum:=types.Money(0)
+			for _, value := range payment {
+				sum+=value.Amount
+			}				
+			prog.Part = i
+			prog.Result = sum
+			ch<- prog
+		}
+	}(payment[i*size:(i+1)*size])
+
+	go func(){
+		defer close(ch)
+		wg.Wait()		
+	}()
+
+	return ch	
+ }
