@@ -1,10 +1,11 @@
 package main
 
 import (
+	"github.com/Shahlojon/wallet/pkg/types"
 	//"path/filepath"
 	// "os"
-	// "log"
-	// "github.com/Shahlojon/wallet/pkg/wallet"
+	"log"
+	"github.com/Shahlojon/wallet/pkg/wallet"
 	// "fmt"
 )
 
@@ -110,5 +111,26 @@ func main() {
 	// 	log.Print(err)
 	// 	return
 	// }
+	s := wallet.Service{}
+	total := types.Money(0)
+	account, err := s.RegisterAccount("+992000000001")
+
+	if err != nil {
+	}
+
+	err = s.Deposit(account.ID, 100_00)
+	if err != nil {
+	}
+	for i := 0; i < 1_000_001; i++ {
+		s.Pay(account.ID, types.Money(i), "auto")
+	}
+
+	log.Println(s.SumPayments(4))
+
+	for i := range s.SumPaymentsWithProgress() {
+		total += i.Result
+	}
+	
+	log.Println(total)
 }
 

@@ -440,40 +440,33 @@ func BenchmarkService_FilterPaymentsByFn(b *testing.B) {
 	log.Println(a)
 }
 
-func BenchmarkSumPaymentsWithProgress(b *testing.B) {
-	svc := &Service{}
+func BenchmarkSumPaymentsWithProgress_user(b *testing.B) {
+	var svc Service
 
-	account, err := svc.RegisterAccount("+992000000000")
-	account1, err := svc.RegisterAccount("+992000000001")
-	account2, err := svc.RegisterAccount("+992000000002")
-	account3, err := svc.RegisterAccount("+992000000003")
-	account4, err := svc.RegisterAccount("+992000000004")
-	acc, err := svc.RegisterAccount("+992000000005")
+	account, err := svc.RegisterAccount("+992000000001")
+
 	if err != nil {
-	}
-	svc.Deposit(acc.ID, 100)
-	err = svc.Deposit(account.ID, 100_00)
-	if err != nil {
+		b.Errorf("method RegisterAccount returned not nil error, account => %v", account)
 	}
 
-	svc.Pay(account.ID, 10_0000, "auto")
-	svc.Pay(account.ID, 10_0000, "auto")
-	svc.Pay(account1.ID, 10_0000, "auto")
-	svc.Pay(account2.ID, 10_0000, "auto")
-	svc.Pay(account1.ID, 10_0000, "auto")
-	svc.Pay(account1.ID, 10_00, "auto")
-	svc.Pay(account3.ID, 10_00, "auto")
-	svc.Pay(account4.ID, 10_00, "auto")
-	svc.Pay(account1.ID, 10_00, "auto")
-	svc.Pay(account3.ID, 10_00, "auto")
-	svc.Pay(account2.ID, 10_00, "auto")
-	svc.Pay(account4.ID, 10_00, "auto")
-	svc.Pay(account4.ID, 10_00, "auto")
-	svc.Pay(account4.ID, 10_00, "auto")
+	err = svc.Deposit(account.ID, 10000000_0000000)
+	if err != nil {
+		b.Errorf("method Deposit returned not nil error, error => %v", err)
+	}
 
-	sumPay := svc.SumPaymentsWithProgress()
-	
-	log.Println(len(sumPay))
+	// for i := 0; i < 10000; i++ {
+	// 	svc.Pay(account.ID, types.Money(i), "Cafe")
+	// } 
+
+	ch := svc.SumPaymentsWithProgress()
+
+	 s, ok := <-ch
+
+	if !ok {
+		b.Errorf(" method SumPaymentsWithProgress ok not closed => %v", ok)
+	} 
+
+	log.Println("=======>>>>>",s) 
 }
 
 func TestService_SumPayments(b *testing.T) {
