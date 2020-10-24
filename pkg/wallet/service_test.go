@@ -458,15 +458,25 @@ func BenchmarkSumPaymentsWithProgress_user(b *testing.B) {
 	// 	svc.Pay(account.ID, types.Money(i), "Cafe")
 	// } 
 
-	ch := svc.SumPaymentsWithProgress()
+	// ch := svc.SumPaymentsWithProgress()
 
-	 s, ok := <-ch
+	
 
-	if !ok {
-		b.Errorf(" method SumPaymentsWithProgress ok not closed => %v", ok)
-	} 
+	sum :=svc.SumPayments(2)
+	//  s, ok := <-ch
+	total := types.Money(0)
+	for i := range svc.SumPaymentsWithProgress() {
+		total += i.Result
+	}
+	if sum != total{
+		b.Error("Errorrrorororo")
+	}
+	// if !ok {
+	// 	b.Errorf(" method SumPaymentsWithProgress ok not closed => %v", ok)
+	// } 
 
-	log.Println("=======>>>>>",s) 
+
+	// log.Println("=======>>>>>",s) 
 }
 
 func TestService_SumPayments(b *testing.T) {

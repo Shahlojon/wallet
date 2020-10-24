@@ -994,7 +994,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	// 	return ch
 	// }
 	if s.payments == nil {
-		return nil
+		return ch
 	}
 	
 	// channel:=make([]<-chan int, parts)
