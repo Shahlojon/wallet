@@ -473,8 +473,7 @@ func BenchmarkSumPaymentsWithProgress_user(b *testing.B) {
 	}
 	// if !ok {
 	// 	b.Errorf(" method SumPaymentsWithProgress ok not closed => %v", ok)
-	// } 
-
+	// }
 
 	// log.Println("=======>>>>>",s) 
 }
